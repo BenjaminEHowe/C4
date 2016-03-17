@@ -1,0 +1,185 @@
+\documentclass[11pt,onecolumn]{article}
+
+% packages
+\usepackage[a4paper,total={160mm, 247mm}]{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{parskip}
+\usepackage{times}
+\usepackage[nottoc,numbib]{tocbibind}
+
+% title content
+\title{Connect4 - First Year Programming Project}
+\author{
+	Benjamin Howe (ct000231)\\
+	\href{mailto:b.howe@student.reading.ac.uk}{b.howe@student.reading.ac.uk}
+}
+\date{\today}
+
+% don't hyphenate words to split them across lines
+\exhyphenpenalty=100000
+\hyphenpenalty=100000
+
+% support for 2 level lists
+\renewcommand{\labelenumi}{\arabic{enumi}.}
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+
+% set toc to show chapters, sections, subsections, and subsub sections, and number these
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Design}
+
+\subsection{Analysis}
+
+\subsubsection{Connect 4 \cite{OwensWorldConnect4}}
+
+This is a simple Connect 4 game which runs using Adobe Flash Player. It doesn't provide the user with any instructions, but the interface is fairly intuitive to use. It features a basic 3-D playing grid.
+
+Because the game requires Adobe Flash Player it cannot be played on platforms where Flash is unavailable (e.g. ARM devices). The website is relatively resource-intensive for such a simple game, requiring  total of 233MB of RAM (Google Chrome 48, 143MB for the page and 90MB for Flash). It also lacks customisation options - the user cannot specify their name or even what colour they want to play as. There's no AI functionality - the game can only be played with two (human) players. The game doesn't keep any record of previous rounds.
+
+\subsubsection{Four In A Line \cite{MathsIsFunFourInALine}}
+
+This is a more advanced ``Four In A Line'' game. It uses JavaScript, which means it will run in practically any web browser, including mobile phone browsers or resource-limited web kiosks. which runs using Adobe Flash Player. The interface is well designed with strong visual cues (e.g. a counter appearing when the mouse hovers over the playing grid). The game features an AI (although it's easily beaten, even on the "hard" setting) and the option to specify various options, such as the difficulty, what colour the computer should play as (or if two humans are playing), and player names. The game performs fairly well on a mobile phone, although the interface doesn't scale down well.
+
+Because the game requires the use of a web browser, it cannot be played where a window manager is unavailable (e.g. serial devices, servers, etc.). The website is fairly resource-intensive, requiring  total of 252MB of RAM (Google Chrome 48), although this is possibly understandable given some of the features offered (e.g. AI).
+
+\subsubsection{C++ Connect 4 Command Line \cite{MichaelEstesCPPC4Cmd}}
+
+This is a basic implementation of Connect 4 written in C++. The user interface is entirely command line based - this is good as it allows almost universal compatibility assuming a C++ compiler is available for the desired architecture. The game uses minimal resources (just over 1MB of RAM). The code appears to compile and work on UNIX-like operating systems (Debian GNU/Linux 8.3 ``Jessie'') as well as Windows (Windows 10 Pro build 10240, Visual Studio 2015).
+
+The game is missing some crucial error checking - for example, entering the string ``one'' when asked for ``a number between 1 and 7'' causes the game to enter an infinite loop. The interface would be more user-friendly if it used colour - the counters are represented by ``O'' and ``X'' (with ``*'' used to signify free space). The game also lacks an AI - it requires two (human) players.
+
+\subsection{Requirements}
+
+
+
+\subsubsection{Program Requirements}
+
+The key words ``MUST'', ``REQUIRED'', ``SHALL'', ``SHOULD'', ``RECOMMENDED'', ``MAY'', and ``OPTIONAL'' (and their negations) are to be interpreted as described in IETF RFC 2119 \cite{IETFRequirementLevels}.
+
+\begin{itemize}
+\item The program MUST implement Connect Four on a 7 by 7 grid.
+\item The program MUST provide help / instructions, either printed automatically on game start or via a command line option.
+\item The program MUST run without a window manager (e.g. over an SSH, serial, or Telnet connection).
+\item The program MUST compile under Visual Studio 2015.
+\item The program MUST detect when a player wins and publicise this.
+\item The program MUST handle errors / exceptions (such as illegal input) appropriately, and MUST NOT unexpectedly terminate or enter infinite loops.
+\item The program MUST make efficient use of resources.
+\item The program SHOULD log errors to a file for debugging purposes.
+\item The program SHOULD have different log levels, with one selected at compile-time.
+\item The program SHOULD compile and run under g++ on UNIX-like operating systems and under different instruction sets (e.g. ARMv6).
+\item The program SHOULD allow the user to customise their game, for example by entering their name and the order the colours will play in.
+\item The interface SHOULD be user-friendly, making appropriate use of colour.
+\item The interface SHOULD NOT cause the console to obviously ``jump'' - the grid SHOULD appear to be still.
+\item The program MAY allow the user to select the grid size.
+\item The program MAY feature an AI with user-selectable difficulty.
+\end{itemize}
+
+\subsubsection{Program Specification}
+
+% description of the program to a non-programmer?
+
+\begin{itemize}
+\item The program will store the counters in a 2-D array, with the memory allocated at runtime.
+\item The program will show help the first time the program is run (determined by checking for the presence of a file) or when it is requested via a command line option.
+\item The program will be tested under Visual Studio 2015 and Debian GNU/Linux 8.3 ``Jessie'', as well as on a Raspberry Pi Zero.
+\item The program will check for win conditions after each player moves.
+\item Inputs will be handled safely, for example using fgets to detect and prevent overflows.
+\item The log level will be recorded in the preprocessor so it is set at compile-time.
+\item The program will ask the user for their name, validate this (name contains at least one vowel, name contains at least 2 characters, etc.), and then store so the user can later be referred to by name.
+\item The program will ask the user who should go first and guess based on the input what was intended (e.g. if ``Jeff'' and ``Joe'' are playing and ``Je'' was entered, ``Jeff'' would be given the first move, but if ``J'' was entered then an error would be raised as this is an ambiguous input).
+\item The virtual counters will be coloured red and yellow, as-per tradition, and displayed on an ASCII grid.
+\item The cursor will be moved within the terminal so the grid doesn't jump.
+\item An AI (with user-selectable difficulty / search depth) will be coded for the player to compete against, either using alpha-beta pruning or the Monte Carlo tree search to find good moves.
+\end{itemize}
+
+\subsubsection{Differentiation}
+
+% mention specific examples, e.g. from earlier sections
+
+This game will be different from competing programs as it will be the only user-friendly (compared with C++ Connect 4 Command Line \cite{MichaelEstesCPPC4Cmd}, which is not user friendly), cross-platform (compared with Connect 4 \cite{OwensWorldConnect4}, which only works on platforms with an implementation of Adobe Flash Player) command line (i.e. not requiring a window manager, compared with Connect 4 \cite{OwensWorldConnect4} and Four In A Line \cite{MathsIsFunFourInALine}, which both require a graphical web browser) ``Connect Four'' game available.
+
+\subsection{Design}
+
+\subsubsection{Problem Decomposition}
+
+\begin{enumerate}
+  \item Logic
+  \begin{enumerate}
+    \item Validating user input
+    \item Win checking
+  \end{enumerate}
+  \item Display rendering
+  \begin{enumerate}
+    \item Keeping the grid still
+    \item Colour
+  \end{enumerate}
+  \item Logging
+  \begin{enumerate}
+    \item Printing to screen
+    \item Writing to log file
+  \end{enumerate}
+  \item AI
+  \begin{enumerate}
+    \item Efficiently considering the possible moves
+    \item Checking how good a particular move is
+  \end{enumerate}
+\end{enumerate}
+
+\subsubsection{High-Level Flowchart / Pseudocode}
+
+\begin{lstlisting}
+getPlayerZeroName();
+getPlayerOneName();
+getPlayOrder();
+displayGrid();
+gameWon = false;
+turn = 0;
+while(not gameWon) {
+  legalMove = false;
+  currentPlayer = turn mod 2;
+  while (not legalMove) {
+    position = askForMove(currentPlayer);
+    if (moveLegal(position)) {
+      legalMove = true;
+      turn = turn + 1;
+      placeCounter(currentPlayer, position);
+      displayGrid();
+      if (win(currentPlayer)) {
+        gameWon = true;
+        print(getName(currentPlayer) + " won!");
+      }
+    }
+  } else {
+    logError("Illegal move by " + getName(currentPlayer) + "!");
+  }
+}
+\end{lstlisting}
+
+\section{Development}
+
+\section{Testing}
+
+\section{Conclusions and Review}
+
+\begin{thebibliography}{99}
+
+\bibitem{OwensWorldConnect4} O, McAteer. (2010). Connect 4; Classic game [Online]. Available: \url{http://www.owensworld.com/games/classic/connect-4} (verified 3 March 2016).
+
+\bibitem{MathsIsFunFourInALine} R, Pierce. (2015, October). Four In A Line [Online]. Available: \url{https://www.mathsisfun.com/games/connect4.html} (verified 3 March 2016).
+
+\bibitem{MichaelEstesCPPC4Cmd} M, Estes. (2013, December). C++ Connect 4 Command Line [Online]. Available: \url{https://gist.github.com/MichaelEstes/7836988/cd9a0ba1891e4313eca67b3d8cab1acd4eaf37c5} (verified 3 March 2016).
+
+\bibitem{IETFRequirementLevels} S, Bradner. (1997, March). Key words for use in RFCs to Indicate Requirement Levels [Online]. Available: \url{https://www.ietf.org/rfc/rfc2119.txt} (verified 4 March 2016).
+
+\end{thebibliography}
+
+\end{document}
