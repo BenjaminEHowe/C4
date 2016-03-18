@@ -1,15 +1,26 @@
 #define NAME_LENGTH 10 // see ISO 7372:2005 page 62
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+void display_grid(char grid[], unsigned short int gridsize);
 
 int get_name(char name[]);
 
 int main() {
+	short int ai = 0; // for now, disable the AI here
 	char player1[NAME_LENGTH + 1];
 	char player2[NAME_LENGTH + 1];
-	short int ai = 0; // for now, disable the AI here
-	
+
+	unsigned short int gridsize = 7;
+	// allocate an array of length gridsize^2
+	char *grid = malloc(sizeof(char) * gridsize * gridsize);
+	// fill the array with spaces
+	for (int i = 0; i < gridsize * gridsize; i++) {
+		grid[i] = ' ';
+	}
+		
 	do {
 		printf("Player 1 name: ");
 	} while (get_name(player1));
@@ -21,6 +32,8 @@ int main() {
 		} while (get_name(player2));
 		printf("Hello, %s!\n\n", player2);
 	}
+
+	display_grid(grid, gridsize);
 
 	return 0;
 }
@@ -37,4 +50,18 @@ int get_name(char name[]) {
 		strcpy(name, input);
 		return 0;
 	}
+}
+
+void display_grid(char grid[], unsigned short int gridsize) {
+	for (int i = 0; i < gridsize * gridsize; i++) {
+		printf("|%c", grid[i]);
+		if (i % gridsize == gridsize - 1) {
+			printf("|\n");
+		}
+	}
+	for (int i = 0; i < gridsize; i++) {
+		printf("--");
+	}
+	printf("-\n");
+	return;
 }
