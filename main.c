@@ -15,31 +15,35 @@ const char colour[7][8] = { ANSI_COLOUR_RESET,  ANSI_COLOUR_YELLOW,
 						    ANSI_COLOUR_MAGENTA };
 
 #include <limits.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-unsigned short int char_to_int(char var);
-void clear();
+#include "char_int.h"
+#include "clear.h"
+#include "win_checks.h"
+
+bool check_draw(unsigned short int position);
+bool check_win(unsigned short int position);
 void display_grid();
 int get_name(char name[]);
-char int_to_char(unsigned short int var);
-void play(unsigned short int current_player);
-void set_console_pos(int x, int y);
+unsigned short int play(unsigned short int current_player);
+
 
 // the grid (and gridsize) should be global as most functions will need them
-char grid[1]; // allocate an array of size 1 for now, so it can be resized
+char* grid[1]; // allocate an array of size 1 for now, so it can be resized
 unsigned short int gridsize;
 
 int main() {
 	short int ai = 0; // for now, disable the AI here
 	unsigned short int current_player;
 	char player[2][NAME_LENGTH + 1];
-	unsigned short int position = 0;
-	unsigned int turn = 0;
-	unsigned int won = 0;
+	unsigned short int position;
+	unsigned short int turn = 0;
+	unsigned short int won = USHRT_MAX;
 
-	gridsize = 2;
+	gridsize = 7;
 	// allocate an array of length gridsize^2
 	realloc(*grid, sizeof(char) * gridsize * gridsize);
 	// fill the array with spaces
@@ -61,19 +65,14 @@ int main() {
 	display_grid();
 	printf("\n"); // leave one blank line between the grid and question
 
-	while(!won) {
+	while(won == USHRT_MAX) {
 		current_player = turn % 2;
 		printf("%s%s%s, which column would you like to play in? ", colour[current_player + 1], player[current_player], colour[0]);
-		play(current_player);
-		// check if current_player has now won
-		// check if the grid is full
-		for (int i = 0; i < gridsize; i++) {
-			if (grid[i] == ' ') {
-				break;
-			}
-			if (i == gridsize - 1) { // if we've got this far in the last iteration
-				won = USHRT_MAX; // it's a draw!
-			}
+		position = play(current_player);
+		if (check_win(position)) {
+			won = current_player;
+		} else if (check_draw(position)) {
+			won = USHRT_MAX - 1;
 		}
 		turn++;
 		clear();
@@ -81,33 +80,84 @@ int main() {
 		printf("\n"); // leave one blank line between the grid and question
 	}
 
-	if (won == USHRT_MAX) { // draw!
+	if (won == USHRT_MAX - 1) { // draw!
 		printf("It's a draw!\n");
 	} else { // player `won` won!
-		printf("%s%s%s won!", colour[won + 1], player[won], colour[0]);
+		printf("%s%s%s won!\n", colour[won + 1], player[won], colour[0]);
 	}
+
+	printf("\nPress any key to continue...\n");
+
+	while (getchar() != '\n'); while (getchar() != '\n');
 
 	return 0;
 }
 
-unsigned short int char_to_int(char var) {
-	// note: only works for the range '1' to '6' inclusive
-	switch (var) {
-	case '1':
-		return 1;
-	case '2':
-		return 2;
-	case '3':
-		return 3;
-	case '4':
-		return 4;
-	case '5':
-		return 5;
-	case '6':
-		return 6;
-	default:
-		return 0;
+bool check_draw(unsigned short int position) {
+	if (position < gridsize) { // if the player played in the top row
+		// check if the grid is full
+		for (int i = 0; i < gridsize; i++) {
+			if (grid[i] == ' ') {
+				break;
+			}
+			if (i == gridsize - 1) { // if we've got this far in the last iteration
+				return true;
+			}
+		}
 	}
+	return false;
+}
+
+bool check_win(unsigned short int position) {
+	unsigned short int x = position % gridsize;
+	unsigned short int y = position / gridsize;
+	char player_token = grid[position];
+
+	if (y <= gridsize - 4) {
+		if (check_down(x, y, player_token)) {
+			return true;
+		}
+	}
+
+	if (check_horizontal(x, y, player_token)) {
+		return true;
+	}
+
+	if (check_diagonal('+', x, y, player_token)) {
+		return true;
+	}
+
+	if (check_diagonal('-', x, y, player_token)) {
+		return true;
+	}
+
+	return false;
+}
+
+void display_grid() {
+	/* note: the top left slot is grid[0] and bottom right is
+	grid[gridsize * gridsize - 1]. So, to find out if there is space in
+	column x, simply check that grid[x] is free (== ' '). */
+	for (int i = 0; i < gridsize; i++) {
+		printf(" %d", i + 1);
+	}
+	printf("\n");
+	for (int i = 0; i < gridsize * gridsize; i++) {
+		if (grid[i] == ' ') { // don't render empty spaces, just print them
+			printf("| ");
+		}
+		else { // actually do rendering
+			printf("|%sO%s", colour[char_to_int(grid[i])], colour[0]);
+		}
+		if (i % gridsize == gridsize - 1) {
+			printf("|\n");
+		}
+	}
+	for (int i = 0; i < gridsize; i++) {
+		printf("--");
+	}
+	printf("-\n");
+	return;
 }
 
 int get_name(char name[]) {
@@ -117,6 +167,9 @@ int get_name(char name[]) {
 		printf("[ERROR] Invalid input, name too long! (maximum length %d characters)\n", NAME_LENGTH);
 		while (getchar() != '\n'); // clear input buffer
 		return 1;
+	} else if (strlen(input) == 1) {
+		printf("[ERROR] A name is required!\n");
+		return 1;
 	} else { // null terminate
 		input[strlen(input) - 1] = '\0';
 		strcpy(name, input);
@@ -124,27 +177,7 @@ int get_name(char name[]) {
 	}
 }
 
-char int_to_char(unsigned short int var) {
-	// note: only works for the range 1 to 6 inclusive
-	switch (var) {
-		case 1:
-			return '1';
-		case 2:
-			return '2';
-		case 3:
-			return '3';
-		case 4:
-			return '4';
-		case 5:
-			return '5';
-		case 6:
-			return '6';
-		default:
-			return 'X';
-	}
-}
-
-void play(unsigned short int current_player) {
+unsigned short int play(unsigned short int current_player) {
 	short int status = 0;
 	unsigned short int position = 0;
 	do {
@@ -175,58 +208,5 @@ void play(unsigned short int current_player) {
 		}
 	}
 
-	return;
+	return i;
 }
-
-void display_grid() {
-	/* note: the top left slot is grid[0] and bottom right is
-	grid[gridsize * gridsize - 1]. So, to find out if there is space in
-	column x, simply check that grid[x] is free (== ' '). */
-	for (int i = 0; i < gridsize; i++) {
-		printf(" %d", i + 1);
-	}
-	printf("\n");
-	for (int i = 0; i < gridsize * gridsize; i++) {
-		if (grid[i] == ' ') { // don't render empty spaces, just print them
-			printf("| ");
-		} else { // actually do rendering
-			printf("|%sO%s", colour[char_to_int(grid[i])], colour[0]);
-		}
-		if (i % gridsize == gridsize - 1) {
-			printf("|\n");
-		}
-	}
-	for (int i = 0; i < gridsize; i++) {
-		printf("--");
-	}
-	printf("-\n");
-	return;
-}
-
-// see: http://stackoverflow.com/a/5920028
-#ifdef _WIN32 // windows implementation of set_console_pos
-#include <windows.h>
-
-// see: https://web.archive.org/web/20111216170632/http://www.adrianxw.dk/SoftwareSite/Consoles/Consoles2.html
-void set_console_pos(int x, int y) {
-	COORD coordinates;
-	coordinates.X = x;
-	coordinates.Y = y;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coordinates);
-}
-
-void clear() {
-	system("cls");
-}
-#elif __unix__ // sane (probably linux) implementation using ANSI
-#include <cstdlib> // windows does this for you (with respect to system())
-
-// see: https://web.archive.org/web/20150906020006/http://rosettacode.org/wiki/Terminal_control/Cursor_positioning#C.2FC.2B.2B
-void set_console_pos(int x, int y) {
-	printf("\033[%d;%dH", y + 1, x + 1);
-}
-
-void clear() {
-	system("clear");
-}
-#endif

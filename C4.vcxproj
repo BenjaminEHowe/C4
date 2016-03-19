@@ -142,7 +142,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="char_int.c" />
+    <ClCompile Include="clear.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="win_checks.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="char_int.h" />
+    <ClInclude Include="clear.h" />
+    <ClInclude Include="win_checks.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
