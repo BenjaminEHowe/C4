@@ -14,6 +14,7 @@ const char colour[7][8] = { ANSI_COLOUR_RESET,  ANSI_COLOUR_YELLOW,
 						    ANSI_COLOUR_BLUE, ANSI_COLOUR_CYAN,
 						    ANSI_COLOUR_MAGENTA };
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,7 +39,7 @@ int main() {
 	unsigned int turn = 0;
 	unsigned int won = 0;
 
-	gridsize = 7;
+	gridsize = 2;
 	// allocate an array of length gridsize^2
 	realloc(*grid, sizeof(char) * gridsize * gridsize);
 	// fill the array with spaces
@@ -56,17 +57,34 @@ int main() {
 		} while (get_name(player[1]));
 	}
 
+	clear();
+	display_grid();
+	printf("\n"); // leave one blank line between the grid and question
+
 	while(!won) {
 		current_player = turn % 2;
+		printf("%s%s%s, which column would you like to play in? ", colour[current_player + 1], player[current_player], colour[0]);
+		play(current_player);
+		// check if current_player has now won
+		// check if the grid is full
+		for (int i = 0; i < gridsize; i++) {
+			if (grid[i] == ' ') {
+				break;
+			}
+			if (i == gridsize - 1) { // if we've got this far in the last iteration
+				won = USHRT_MAX; // it's a draw!
+			}
+		}
+		turn++;
 		clear();
 		display_grid();
 		printf("\n"); // leave one blank line between the grid and question
-		printf("%s%s%s, which column would you like to play in? ", colour[current_player + 1], player[current_player], colour[0]);
-		play(current_player);
-		if (won == 0) { // if we're going around again, clear for the next move
-			clear();
-			turn++;
-		}
+	}
+
+	if (won == USHRT_MAX) { // draw!
+		printf("It's a draw!\n");
+	} else { // player `won` won!
+		printf("%s%s%s won!", colour[won + 1], player[won], colour[0]);
 	}
 
 	return 0;
@@ -172,11 +190,7 @@ void display_grid() {
 		if (grid[i] == ' ') { // don't render empty spaces, just print them
 			printf("| ");
 		} else { // actually do rendering
-			char str[16];
-			strcpy(str, colour[char_to_int(grid[i])]);
-			strcat(str, "O");
-			strcat(str, colour[0]);
-			printf("|%s", str);
+			printf("|%sO%s", colour[char_to_int(grid[i])], colour[0]);
 		}
 		if (i % gridsize == gridsize - 1) {
 			printf("|\n");
