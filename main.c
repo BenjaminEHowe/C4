@@ -49,13 +49,11 @@ int main() {
 	do {
 		printf("Player 1 name: ");
 	} while (get_name(player[0]));
-	printf("Hello, %s!\n\n", player[0]);
 
 	if (!ai) {
 		do {
 			printf("Player 2 name: ");
 		} while (get_name(player[1]));
-		printf("Hello, %s!\n\n", player[1]);
 	}
 
 	while(!won) {
@@ -63,7 +61,7 @@ int main() {
 		clear();
 		display_grid();
 		printf("\n"); // leave one blank line between the grid and question
-		printf("%s, which column would you like to play in? ", player[current_player]);
+		printf("%s%s%s, which column would you like to play in? ", colour[current_player + 1], player[current_player], colour[0]);
 		play(current_player);
 		if (won == 0) { // if we're going around again, clear for the next move
 			clear();
