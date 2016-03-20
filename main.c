@@ -2,17 +2,17 @@
 
 // see http://stackoverflow.com/questions/3219393/stdlib-and-colored-output-in-c
 #define ANSI_COLOUR_RED	 	"\x1b[31m"
-#define ANSI_COLOUR_GREEN   "\x1b[32m"
-#define ANSI_COLOUR_YELLOW  "\x1b[33m"
+#define ANSI_COLOUR_GREEN	"\x1b[32m"
+#define ANSI_COLOUR_YELLOW	"\x1b[33m"
 #define ANSI_COLOUR_BLUE	"\x1b[34m"
-#define ANSI_COLOUR_MAGENTA "\x1b[35m"
+#define ANSI_COLOUR_MAGENTA	"\x1b[35m"
 #define ANSI_COLOUR_CYAN	"\x1b[36m"
-#define ANSI_COLOUR_RESET   "\x1b[0m"
+#define ANSI_COLOUR_RESET	"\x1b[0m"
 
-const char colour[7][8] = { ANSI_COLOUR_RESET,  ANSI_COLOUR_YELLOW,
-							ANSI_COLOUR_RED, ANSI_COLOUR_GREEN,
-							ANSI_COLOUR_BLUE, ANSI_COLOUR_CYAN,
-							ANSI_COLOUR_MAGENTA };
+const char colour[7][8] = {	ANSI_COLOUR_RESET,  ANSI_COLOUR_YELLOW,
+				ANSI_COLOUR_RED, ANSI_COLOUR_GREEN,
+				ANSI_COLOUR_BLUE, ANSI_COLOUR_CYAN,
+				ANSI_COLOUR_MAGENTA };
 
 #include <limits.h>
 #include <stdbool.h>
@@ -81,7 +81,7 @@ int main() {
 			} else {				
 				// fill the array with spaces
 				for (int i = 0; i < gridsize * gridsize; i++) {
-						grid[i] = ' ';
+					grid[i] = ' ';
 				}
 			}
 		}
