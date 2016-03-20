@@ -49,14 +49,14 @@ int main() {
 		printf("Number of players: ");
 		if (scanf("%hu", &players) != 1) {
 			printf("[ERROR] That doesn't look like an integer!\n");
-		} else if (gridsize > 6) {
+		} else if (players < 2) {
+			printf("[ERROR] The minimum number of players is 2!\n");
+			players = 0;
+		} else if (players > 6) {
 			printf("[ERROR] The maximum number of players is 6!\n");
+			players = 0;
 		}
-
-		if (players == 0) { // if we're going around again...
-			while (getchar() != '\n');
-		}
-
+		while (getchar() != '\n'); // consume the remainder of the input
 	} while (players == 0);
 	
 	for (int i = 0; i < players; i++) {
@@ -168,10 +168,45 @@ void display_grid() {
 	/* note: the top left slot is grid[0] and bottom right is
 	grid[gridsize * gridsize - 1]. So, to find out if there is space in
 	column x, simply check that grid[x] is free (== ' '). */
-	for (int i = 0; i < gridsize; i++) {
-		printf(" %d", i + 1);
+	if (gridsize >= 10) {
+		if (gridsize >= 100) { // 3 row
+			for (int i = 0; i < gridsize; i++) { // top row
+				if (i >= 99) {
+					printf(" %d", ((i + 1) / 100));
+				} else {
+					printf("  ");
+				}
+			}
+			printf("\n");
+			for (int i = 0; i < gridsize; i++) { // middle row
+				if (i >= 9) {
+					printf(" %d", (((i + 1) % 100) / 10));
+				} else {
+					printf("  ");
+				}
+			}
+			printf("\n");
+		} else { // 2 row
+			for (int i = 0; i < gridsize; i++) { // top row
+				if (i >= 9) {
+					printf(" %d", ((i + 1) / 10));
+				} else {
+					printf("  ");
+				}
+			}
+			printf("\n");
+		}
+		for (int i = 0; i < gridsize; i++) { // bottom row
+			printf(" %d", ((i + 1) % 10));
+		}
+		printf("\n");
+	} else {
+		for (int i = 0; i < gridsize; i++) {
+			printf(" %d", i + 1);
+		}
+		printf("\n");
 	}
-	printf("\n");
+	
 	for (int i = 0; i < gridsize * gridsize; i++) {
 		if (grid[i] == ' ') { // don't render empty spaces, just print them
 			printf("| ");
