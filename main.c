@@ -50,7 +50,9 @@ int main() {
 	for (int i = 0; i < gridsize * gridsize; i++) {
 		grid[i] = ' ';
 	}
-		
+
+	clear();
+	
 	do {
 		printf("Player 1 name: ");
 	} while (get_name(player[0]));
@@ -87,9 +89,8 @@ int main() {
 	}
 
 	printf("\nPress any key to continue...\n");
-
 	while (getchar() != '\n'); while (getchar() != '\n');
-
+	clear();
 	return 0;
 }
 

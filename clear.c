@@ -7,10 +7,10 @@ void clear() {
 }
 
 #elif __unix__ // sane (probably linux) implementation using ANSI
-#include <cstdlib> // windows does this for you (with respect to system())
+#include <stdlib.h>
 
 void clear() {
-	system("clear");
+	system("tput reset");
 }
 
 #endif
