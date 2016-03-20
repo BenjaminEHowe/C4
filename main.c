@@ -32,8 +32,8 @@ unsigned short int play(unsigned short int current_player);
 
 
 // the grid (and gridsize) should be global as most functions will need them
-char* grid[1]; // allocate an array of size 1 for now, so it can be resized
-unsigned short int gridsize;
+char* grid; // will br used with malloc later
+unsigned short int gridsize = 0;
 
 int main() {
 	short int ai = 0; // for now, disable the AI here
@@ -42,14 +42,6 @@ int main() {
 	unsigned short int position;
 	unsigned short int turn = 0;
 	unsigned short int won = USHRT_MAX;
-
-	gridsize = 7;
-	// allocate an array of length gridsize^2
-	realloc(*grid, sizeof(char) * gridsize * gridsize);
-	// fill the array with spaces
-	for (int i = 0; i < gridsize * gridsize; i++) {
-		grid[i] = ' ';
-	}
 
 	clear();
 	
@@ -62,7 +54,35 @@ int main() {
 			printf("Player 2 name: ");
 		} while (get_name(player[1]));
 	}
+    
+    
+	do {
+        printf("Grid size: ");
+		if (scanf("%hu", &gridsize) != 1) {
+			printf("[ERROR] That doesn't look like an integer!\n");
+		} else if (gridsize > 255) {
+			printf("[ERROR] The gridsize must be less than 255!\n");
+		}
 
+		if (gridsize != 0) { // try to allocate memory for an array of chars length gridsize^2
+        		grid = (char*) malloc(sizeof(char) * gridsize * gridsize);
+        		if (grid == NULL) {
+                    printf("[ERROR] Couldn't allocate memory - try a smaller grid size?\n");
+                    gridsize = 0;
+                } else {                
+                    // fill the array with spaces
+                    for (int i = 0; i < gridsize * gridsize; i++) {
+                            grid[i] = ' ';
+                    }
+                }
+		}
+
+		if (gridsize == 0) { // if we're going around again...
+			while (getchar() != '\n');
+		}
+
+	} while (gridsize == 0);
+    
 	clear();
 	display_grid();
 	printf("\n"); // leave one blank line between the grid and question
