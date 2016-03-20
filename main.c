@@ -38,23 +38,33 @@ unsigned short int gridsize = 0;
 int main() {
 	short int ai = 0; // for now, disable the AI here
 	unsigned short int current_player;
-	char player[2][NAME_LENGTH + 1];
+	char player[6][NAME_LENGTH + 1];
+    unsigned short int players = 0;
 	unsigned short int position;
 	unsigned short int turn = 0;
 	unsigned short int won = USHRT_MAX;
 
 	clear();
-	
-	do {
-		printf("Player 1 name: ");
-	} while (get_name(player[0]));
-
-	if (!ai) {
-		do {
-			printf("Player 2 name: ");
-		} while (get_name(player[1]));
-	}
     
+    do {
+        printf("Number of players: ");
+		if (scanf("%hu", &players) != 1) {
+			printf("[ERROR] That doesn't look like an integer!\n");
+		} else if (gridsize > 6) {
+			printf("[ERROR] The maximum number of players is 6!\n");
+		}
+
+		if (players == 0) { // if we're going around again...
+			while (getchar() != '\n');
+		}
+
+	} while (players == 0);
+    
+    for (int i = 0; i < players; i++) {
+        do {
+            printf("Player %d name: ", (i + 1));
+        } while (get_name(player[i]));
+    }    
     
 	do {
         printf("Grid size: ");
@@ -88,7 +98,7 @@ int main() {
 	printf("\n"); // leave one blank line between the grid and question
 
 	while(won == USHRT_MAX) {
-		current_player = turn % 2;
+		current_player = turn % players;
 		printf("%s%s%s, which column would you like to play in? ", colour[current_player + 1], player[current_player], colour[0]);
 		position = play(current_player);
 		if (check_win(position)) {
