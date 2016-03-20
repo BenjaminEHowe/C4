@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-extern char* grid[];
+extern char* grid;
 extern unsigned short int gridsize;
 
 bool check_diagonal(char type, unsigned short int x, unsigned short int y, char player_token) {
