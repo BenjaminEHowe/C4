@@ -1,18 +1,18 @@
 #define NAME_LENGTH 70 // see ISO 7372:2005 page 62
 
 // see http://stackoverflow.com/questions/3219393/stdlib-and-colored-output-in-c
-#define ANSI_COLOUR_RED     "\x1b[31m"
+#define ANSI_COLOUR_RED	 	"\x1b[31m"
 #define ANSI_COLOUR_GREEN   "\x1b[32m"
 #define ANSI_COLOUR_YELLOW  "\x1b[33m"
-#define ANSI_COLOUR_BLUE    "\x1b[34m"
+#define ANSI_COLOUR_BLUE	"\x1b[34m"
 #define ANSI_COLOUR_MAGENTA "\x1b[35m"
-#define ANSI_COLOUR_CYAN    "\x1b[36m"
+#define ANSI_COLOUR_CYAN	"\x1b[36m"
 #define ANSI_COLOUR_RESET   "\x1b[0m"
 
 const char colour[7][8] = { ANSI_COLOUR_RESET,  ANSI_COLOUR_YELLOW,
-						    ANSI_COLOUR_RED, ANSI_COLOUR_GREEN,
-						    ANSI_COLOUR_BLUE, ANSI_COLOUR_CYAN,
-						    ANSI_COLOUR_MAGENTA };
+							ANSI_COLOUR_RED, ANSI_COLOUR_GREEN,
+							ANSI_COLOUR_BLUE, ANSI_COLOUR_CYAN,
+							ANSI_COLOUR_MAGENTA };
 
 #include <limits.h>
 #include <stdbool.h>
@@ -30,7 +30,6 @@ void display_grid();
 int get_name(char name[]);
 unsigned short int play(unsigned short int current_player);
 
-
 // the grid (and gridsize) should be global as most functions will need them
 char* grid; // will br used with malloc later
 unsigned short int gridsize = 0;
@@ -39,15 +38,15 @@ int main() {
 	short int ai = 0; // for now, disable the AI here
 	unsigned short int current_player;
 	char player[6][NAME_LENGTH + 1];
-    unsigned short int players = 0;
+	unsigned short int players = 0;
 	unsigned short int position;
 	unsigned short int turn = 0;
 	unsigned short int won = USHRT_MAX;
 
 	clear();
-    
-    do {
-        printf("Number of players: ");
+	
+	do {
+		printf("Number of players: ");
 		if (scanf("%hu", &players) != 1) {
 			printf("[ERROR] That doesn't look like an integer!\n");
 		} else if (gridsize > 6) {
@@ -59,15 +58,15 @@ int main() {
 		}
 
 	} while (players == 0);
-    
-    for (int i = 0; i < players; i++) {
-        do {
-            printf("Player %d name: ", (i + 1));
-        } while (get_name(player[i]));
-    }    
-    
+	
+	for (int i = 0; i < players; i++) {
+		do {
+			printf("Player %d name: ", (i + 1));
+		} while (get_name(player[i]));
+	}	
+	
 	do {
-        printf("Grid size: ");
+		printf("Grid size: ");
 		if (scanf("%hu", &gridsize) != 1) {
 			printf("[ERROR] That doesn't look like an integer!\n");
 		} else if (gridsize > 255) {
@@ -75,16 +74,16 @@ int main() {
 		}
 
 		if (gridsize != 0) { // try to allocate memory for an array of chars length gridsize^2
-        		grid = (char*) malloc(sizeof(char) * gridsize * gridsize);
-        		if (grid == NULL) {
-                    printf("[ERROR] Couldn't allocate memory - try a smaller grid size?\n");
-                    gridsize = 0;
-                } else {                
-                    // fill the array with spaces
-                    for (int i = 0; i < gridsize * gridsize; i++) {
-                            grid[i] = ' ';
-                    }
-                }
+			grid = (char*) malloc(sizeof(char) * gridsize * gridsize);
+			if (grid == NULL) {
+				printf("[ERROR] Couldn't allocate memory - try a smaller grid size?\n");
+				gridsize = 0;
+			} else {				
+				// fill the array with spaces
+				for (int i = 0; i < gridsize * gridsize; i++) {
+						grid[i] = ' ';
+				}
+			}
 		}
 
 		if (gridsize == 0) { // if we're going around again...
@@ -92,7 +91,7 @@ int main() {
 		}
 
 	} while (gridsize == 0);
-    
+	
 	clear();
 	display_grid();
 	printf("\n"); // leave one blank line between the grid and question
