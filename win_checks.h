@@ -3,8 +3,9 @@
 
 #include <stdbool.h>
 
+bool check_diagonal(char type, unsigned short int x, unsigned short int y, char player_token);
 bool check_down(unsigned short int x, unsigned short int y, char player_token);
 bool check_horizontal(unsigned short int x, unsigned short int y, char player_token);
-bool check_diagonal(char type, unsigned short int x, unsigned short int y, char player_token);
+bool check_valid_coord(unsigned short int coord);
 
 #endif
