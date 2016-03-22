@@ -71,6 +71,7 @@ int main() {
 			printf("[ERROR] That doesn't look like an integer!\n");
 		} else if (gridsize > 255) {
 			printf("[ERROR] The gridsize must be less than 255!\n");
+			gridsize = 0;
 		}
 
 		if (gridsize != 0) { // try to allocate memory for an array of chars length gridsize^2
