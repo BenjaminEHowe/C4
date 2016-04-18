@@ -31,7 +31,7 @@ int get_name(char name[]);
 unsigned short int play(unsigned short int current_player);
 
 // the grid (and gridsize) should be global as most functions will need them
-char* grid; // will br used with malloc later
+char* grid; // will be used with malloc later
 unsigned short int gridsize = 0;
 
 int main() {
